@@ -1,0 +1,40 @@
+function myFunction() {
+  var sheet = SpreadsheetApp.getActiveSheet();
+  var range = sheet.getRange("B:B");  // This is the column you want to make highlights inside, change it to what you want. It must be one column.
+  var to_be_highlighted_from_range = sheet.getRange("I1:I3");  // This is the column you want to make highlights from it, change it to what you want. It must be one column.
+  replaceInSheet(sheet,range, to_be_highlighted_from_range);
+}
+
+function replaceInSheet(sheet, range, to_be_highlighted_from_range) {
+   //Confirm
+  var ui = SpreadsheetApp.getUi(); 
+  var spread = SpreadsheetApp.getActiveSpreadsheet();
+  var result = ui.alert(
+     "Recommendation",
+     'It is recommended that you test the script on a small subset in your sheet first \n Are you still sure that you want to proceed with the same selections?',
+      ui.ButtonSet.YES_NO);
+
+  // Process the user's response.
+  if (result == ui.Button.YES) {
+    
+    var parcel_numbers  = range.getValues();
+    var should_highlighted_values = to_be_highlighted_from_range.getValues();  
+    var cellsChanged = 0;
+    
+    for (var item=0; item<should_highlighted_values.length; item++) {
+      
+      for (var row=0; row<parcel_numbers.length; row++) {
+        if (parcel_numbers[row].toString().toLowerCase() == should_highlighted_values[item].toString().toLowerCase()){
+          sheet.getRange(row+1, 2).setBackground("#00FFFF")
+          cellsChanged++;
+          break;
+        }
+      }
+      
+    }
+    spread.toast(cellsChanged + " Cells Highlighted", "STATUS");
+  } 
+  else {
+    spread.toast("Okay. No action taken", "ABANDONED");
+  }  
+}
